@@ -62,6 +62,22 @@ class HuokanWindow(tkinter.Frame):
             command=lambda: self.sort_results("gold", True),
         )
 
+        self._context_menu = tkinter.Menu(self, tearoff=0)
+        self._context_menu.add_command(
+            label="Copy Timestamp to Clipboard",
+            command=lambda: self._copy_to_clipboard("timestamp"),
+        )
+        self._context_menu.add_command(
+            label="Copy Name to Clipboard",
+            command=lambda: self._copy_to_clipboard("name"),
+        )
+        self._context_menu.add_command(
+            label="Copy Gold to Clipboard",
+            command=lambda: self._copy_to_clipboard("gold"),
+        )
+
+        self._results_view.bind("<Button-3>", self._show_context_menu)
+
     def search(self):
         try:
             unsorted_results = search_payouts(
@@ -95,3 +111,13 @@ class HuokanWindow(tkinter.Frame):
             self._results_view.insert(
                 "", "end", values=(timestamp, result["name"], result["gold"])
             )
+
+    def _show_context_menu(self, event):
+        self._results_view.selection_set(self._results_view.identify_row(event.y))
+        self._context_menu.post(event.x_root, event.y_root)
+
+    def _copy_to_clipboard(self, column):
+        (selected_row) = self._results_view.selection()
+        column_value = self._results_view.set(selected_row, column)
+        self.clipboard_clear()
+        self.clipboard_append(column_value)
