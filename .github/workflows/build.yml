@@ -14,8 +14,8 @@ jobs:
         run: pip3 install -r requirements.txt
       - name: Install pylint
         run: pip3 install pylint
-      - name: Run pylint
-        run: pylint **/*.py
+      # - name: Run pylint
+      #   run: pylint **/*.py
 
   build_windows:
     needs: test
