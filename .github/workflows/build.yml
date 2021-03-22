@@ -33,7 +33,7 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
       - name: Build
-        run: pyinstaller --add-data logo.ico:. --icon=logo.ico --onefile --windowed main.py
+        run: pyinstaller --add-data="logo.ico;." --icon=logo.ico --onefile --windowed main.py
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
