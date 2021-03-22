@@ -42,31 +42,56 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # build:
-  #   needs: test
-  #   if: startsWith(github.ref, 'refs/tags/')
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         fetch-depth: 0
-  #     - uses: actions/setup-python@v2
-  #       with:
-  #         python-version: 3.9
-  #     - name: Install dependencies
-  #       run: |
-  #         pip3 install -r requirements.txt
-  #         pip3 install pyinstaller
-  #     - name: Build
-  #       run: pyinstaller --add-data logo.ico:. --icon=logo.ico --onefile --windowed main.py
-  #     - name: Generate changelog
-  #       run: git log $(git describe --always --abbrev=0 --tags $(git describe --abbrev=0 --tags --always)^)..HEAD --oneline --pretty="- %s" > CHANGELOG.md
-  #     - name: Upload
-  #       uses: softprops/action-gh-release@v1
-  #       with:
-  #         body_path: CHANGELOG.md
-  #         files:
-  #           dist/*
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  build_macos:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          pip3 install -r requirements.txt
+          pip3 install pyinstaller
+      - name: Build
+        run: pyinstaller -y --name "HuokanPayoutClient" --onefile --windowed --noupx --icon logo.ico --add-data "logo.ico:." --exclude-module asyncio --exclude-module bz2 --exclude-module hashlib --exclude-module lzma --exclude-module socket --exclude-module ssl --exclude-module libssl --exclude-module libcrypto --exclude-module pyexpat --exclude-module select --exclude-module unicodedata main.py
+      - name: Upload
+        uses: softprops/action-gh-release@v1
+        with:
+          files:
+            dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build_linux:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          pip3 install -r requirements.txt
+          pip3 install pyinstaller
+      - name: Build
+        run: pyinstaller -y --name "HuokanPayoutClient" --onefile --windowed --noupx --icon logo.ico --add-data "logo.ico:." --exclude-module asyncio --exclude-module bz2 --exclude-module hashlib --exclude-module lzma --exclude-module socket --exclude-module ssl --exclude-module libssl --exclude-module libcrypto --exclude-module pyexpat --exclude-module select --exclude-module unicodedata main.py
+      - name: Generate changelog
+        run: git log $(git describe --always --abbrev=0 --tags $(git describe --abbrev=0 --tags --always)^)..HEAD --oneline --pretty="- %s" > CHANGELOG.md
+      - name: Upload
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: CHANGELOG.md
+          files:
+            dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
