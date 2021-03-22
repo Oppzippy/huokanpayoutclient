@@ -30,7 +30,7 @@ class HuokanWindow(tkinter.Frame):
 
     def _create_widgets(self):
         self._wow_path_picker = FilePicker(
-            self, label="WoW Folder", type=FilePickerType.DIRECTORY
+            self, label="WoW Folder", type_=FilePickerType.DIRECTORY
         )
         self._wow_path_picker.set_path(
             "C:/Program Files (x86)/World of Warcraft/_retail_"

@@ -13,13 +13,13 @@ class FilePicker(tkinter.Frame):
     def __init__(
         self,
         master,
-        type: FilePickerType = FilePickerType.FILE,
+        type_: FilePickerType = FilePickerType.FILE,
         label=None,
         command: callable = None,
     ):
         super().__init__(master)
         self.path = ""
-        self._type = type
+        self._type = type_
         self._label = label
         self._command = command
         self._set_up_grid()

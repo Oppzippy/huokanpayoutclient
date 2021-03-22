@@ -25,9 +25,9 @@ def get_and_parse_history(wow_path: str) -> List[dict]:
 def parse_history(history: list) -> List[dict]:
     completed_payments = []
     for payment_batch in history:
-        input = read_payments_csv(payment_batch["input"])
-        output = read_payments_csv(payment_batch.get("output", ""))
-        payments = get_completed_payments(input, output)
+        input_payments = read_payments_csv(payment_batch["input"])
+        output_payments = read_payments_csv(payment_batch.get("output", ""))
+        payments = get_completed_payments(input_payments, output_payments)
         transformed_payments = [
             {
                 "name": name,
@@ -50,10 +50,10 @@ def read_payments_csv(history: str) -> dict:
 
 
 def get_completed_payments(
-    input: dict[str, Decimal], output: dict[str, Decimal]
+    input_payments: dict[str, Decimal], output_payments: dict[str, Decimal]
 ) -> dict[str, Decimal]:
-    diff = input.copy()
-    for name, gold in output.items():
+    diff = input_payments.copy()
+    for name, gold in output_payments.items():
         diff["name"] = diff.get(name, Decimal(0)) - gold
         if diff["name"] == Decimal(0):
             del diff["name"]
@@ -84,9 +84,9 @@ def read_files(files: Iterable) -> Iterable:
     return map(lambda f: read_file(f), files)
 
 
-def read_file(file: str) -> dict:
-    with open(file, "r", encoding="utf-8") as f:
-        lines = f.readlines()
+def read_file(file_path: str) -> dict:
+    with open(file_path, "r", encoding="utf-8") as file:
+        lines = file.readlines()
         text = "\n".join(lines)
         text = text.replace("HuokanPayoutDB = {", "{", 1)
         table = slpp.decode(text)
