@@ -3,7 +3,7 @@ import glob
 import csv
 from datetime import datetime
 from decimal import Decimal
-from typing import Iterable, List, Dict
+from typing import Iterable, List
 from slpp import slpp
 
 
@@ -66,8 +66,8 @@ def get_history(wow_path: str) -> list:
         raise InvalidWoWDirectoryException(wow_path)
     savedvariables = read_files(savedvariables_files)
     history = []
-    for sv in savedvariables:
-        profiles = sv["profiles"]
+    for savedvariable in savedvariables:
+        profiles = savedvariable["profiles"]
         for profile in profiles.values():
             history.extend(profile["history"])
     return history
@@ -94,5 +94,4 @@ def read_file(file: str) -> dict:
 
 
 class InvalidWoWDirectoryException(Exception):
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+    pass

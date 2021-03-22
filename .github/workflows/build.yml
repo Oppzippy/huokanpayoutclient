@@ -33,7 +33,7 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
       - name: Build
-        run: pyinstaller --add-data="logo.ico;." --icon=logo.ico --onefile --windowed main.py
+        run: pyinstaller -y --name "HuokanPayoutClient" --onefile --windowed --noupx --icon logo.ico --add-data "logo.ico;." --exclude-module asyncio --exclude-module bz2 --exclude-module hashlib --exclude-module lzma --exclude-module socket --exclude-module ssl --exclude-module libssl --exclude-module libcrypto --exclude-module pyexpat --exclude-module select --exclude-module unicodedata main.py
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
