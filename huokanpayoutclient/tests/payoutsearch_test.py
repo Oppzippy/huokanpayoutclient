@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from decimal import Decimal
 
-from huokanpayout.payoutsearch import search_payouts
+from huokanpayoutclient.huokanpayout.payoutsearch import search_payouts
 
 PATH = os.path.dirname(os.path.realpath(__file__))
 
