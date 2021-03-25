@@ -54,9 +54,9 @@ def get_completed_payments(
 ) -> dict[str, Decimal]:
     diff = input_payments.copy()
     for name, gold in output_payments.items():
-        diff["name"] = diff.get(name, Decimal(0)) - gold
-        if diff["name"] == Decimal(0):
-            del diff["name"]
+        diff[name] = diff.get(name, Decimal(0)) - gold
+        if diff[name] == Decimal(0):
+            del diff[name]
     return diff
 
 
