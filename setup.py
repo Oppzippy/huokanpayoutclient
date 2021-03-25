@@ -12,5 +12,11 @@ setup(
     license="UNLICENSED",
     packages=setuptools.find_packages(),
     install_requires=["SLPP"],
-    entry_points={"gui_scripts": ["huokanpayoutclient=entrypoints.main:main"]},
+    entry_points={
+        "console_scripts": [
+            "huokanpayoutclient=huokanpayoutclient.entrypoints.main:main"
+        ]
+    },
+    include_package_data=True,
+    data_files=[("huokanpayoutclient", ["huokanpayoutclient/logo.ico"])],
 )

@@ -35,7 +35,7 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
       - name: Build
-        run: pyinstaller -y --name "HuokanPayoutClient" --onefile --windowed --noupx --icon logo.ico --add-data "logo.ico;." --exclude-module asyncio --exclude-module bz2 --exclude-module hashlib --exclude-module lzma --exclude-module socket --exclude-module ssl --exclude-module libssl --exclude-module libcrypto --exclude-module pyexpat --exclude-module select --exclude-module unicodedata entrypoints/main.py
+        run: pyinstaller -y --name "HuokanPayoutClient" --onefile --windowed --noupx --icon huokanpayoutclient/logo.ico --add-data "huokanpayoutclient/logo.ico;." --exclude-module asyncio --exclude-module bz2 --exclude-module hashlib --exclude-module lzma --exclude-module socket --exclude-module ssl --exclude-module libssl --exclude-module libcrypto --exclude-module pyexpat --exclude-module select --exclude-module unicodedata huokanpayoutclient/entrypoints/main.py
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
@@ -60,7 +60,7 @@ jobs:
           pip3 install -r requirements.txt
           pip3 install pyinstaller
       - name: Build
-        run: pyinstaller -y --name "HuokanPayoutClient-Mac" --onefile --windowed --noupx --icon logo.ico --add-data "logo.ico:." --exclude-module asyncio --exclude-module bz2 --exclude-module hashlib --exclude-module lzma --exclude-module socket --exclude-module ssl --exclude-module libssl --exclude-module libcrypto --exclude-module pyexpat --exclude-module select --exclude-module unicodedata entrypoints/main.py
+        run: pyinstaller -y --name "HuokanPayoutClient-Mac" --onefile --windowed --noupx --icon huokanpayoutclient/logo.ico --add-data "huokanpayoutclient/logo.ico:." --exclude-module asyncio --exclude-module bz2 --exclude-module hashlib --exclude-module lzma --exclude-module socket --exclude-module ssl --exclude-module libssl --exclude-module libcrypto --exclude-module pyexpat --exclude-module select --exclude-module unicodedata huokanpayoutclient/entrypoints/main.py
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
@@ -85,7 +85,7 @@ jobs:
           pip3 install -r requirements.txt
           pip3 install pyinstaller
       - name: Build
-        run: pyinstaller -y --name "HuokanPayoutClient-Linux" --onefile --windowed --noupx --icon logo.ico --add-data "logo.ico:." --exclude-module asyncio --exclude-module bz2 --exclude-module hashlib --exclude-module lzma --exclude-module socket --exclude-module ssl --exclude-module libssl --exclude-module libcrypto --exclude-module pyexpat --exclude-module select --exclude-module unicodedata entrypoints/main.py
+        run: pyinstaller -y --name "HuokanPayoutClient-Linux" --onefile --windowed --noupx --icon huokanpayoutclient/logo.ico --add-data "huokanpayoutclient/logo.ico:." --exclude-module asyncio --exclude-module bz2 --exclude-module hashlib --exclude-module lzma --exclude-module socket --exclude-module ssl --exclude-module libssl --exclude-module libcrypto --exclude-module pyexpat --exclude-module select --exclude-module unicodedata huokanpayoutclient/entrypoints/main.py
       - name: Generate changelog
         run: git log $(git describe --always --abbrev=0 --tags $(git describe --abbrev=0 --tags --always)^)..HEAD --oneline --pretty="- %s" > CHANGELOG.md
       - name: Upload

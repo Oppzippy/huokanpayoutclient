@@ -1,7 +1,7 @@
 import tkinter
 import locale
-from util.resources import get_resource_path
-from widgets.huokanwindow import HuokanWindow
+from huokanpayoutclient.util.resources import get_resource_path
+from huokanpayoutclient.widgets.huokanwindow import HuokanWindow
 
 locale.setlocale(locale.LC_ALL, "")
 
@@ -9,7 +9,8 @@ locale.setlocale(locale.LC_ALL, "")
 def main():
     root = tkinter.Tk()
     root.minsize(300, 200)
-    root.iconbitmap(get_resource_path("logo.ico"))
+    p = get_resource_path("logo.ico")
+    root.iconbitmap(p)
     HuokanWindow(master=root)
     root.mainloop()
 
