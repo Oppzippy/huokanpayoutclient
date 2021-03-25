@@ -16,6 +16,8 @@ jobs:
         run: pip3 install pylint
       - name: Run pylint
         run: pylint **/*.py
+      - name: Run tests
+        run: bash test.sh
 
   build_windows:
     needs: test
