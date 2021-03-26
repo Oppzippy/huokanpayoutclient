@@ -29,7 +29,9 @@ class HuokanWindow(tkinter.Frame):
         self.rowconfigure(0)
         self.rowconfigure(1)
         self.rowconfigure(2)
-        self.rowconfigure(3, weight=1)
+        self.rowconfigure(3)
+        self.rowconfigure(4)
+        self.rowconfigure(5, weight=1)
 
     def _create_widgets(self):
         self._wow_path_picker = FilePicker(
@@ -39,16 +41,17 @@ class HuokanWindow(tkinter.Frame):
             "C:/Program Files (x86)/World of Warcraft/_retail_"
         )
         self._wow_path_picker.grid(row=0, column=0, sticky=tkinter.E + tkinter.W)
+
         self._payment_filter = PaymentFilter(self)
         self._payment_filter.grid(row=1, column=0, sticky=tkinter.E + tkinter.W)
         self._search_button = ttk.Button(self, text="Search", command=self.search)
         self._search_button.grid(row=2, column=0, sticky=tkinter.E + tkinter.W)
 
         self._scrollable_results_view = ScrollableTreeview(
-            self, columns=("timestamp", "name", "gold")
+            self, columns=("timestamp", "realm", "sender", "recipient", "gold")
         )
         self._scrollable_results_view.grid(
-            row=3, column=0, sticky=tkinter.E + tkinter.W + tkinter.N + tkinter.S
+            row=5, column=0, sticky=tkinter.E + tkinter.W + tkinter.N + tkinter.S
         )
         self._results_view = self._scrollable_results_view.tree_view
         self._results_view.heading(
@@ -57,10 +60,18 @@ class HuokanWindow(tkinter.Frame):
             command=lambda: self.sort_results("timestamp", True),
         )
         self._results_view.heading(
-            "#2", text="Name", command=lambda: self.sort_results("name", False)
+            "#2", text="Realm", command=lambda: self.sort_results("senderRealm", False)
         )
         self._results_view.heading(
-            "#3",
+            "#3", text="Sender", command=lambda: self.sort_results("senderName", False)
+        )
+        self._results_view.heading(
+            "#4",
+            text="Recipient",
+            command=lambda: self.sort_results("recipientName", False),
+        )
+        self._results_view.heading(
+            "#5",
             text="Gold",
             command=lambda: self.sort_results("gold", True),
         )
@@ -71,8 +82,16 @@ class HuokanWindow(tkinter.Frame):
             command=lambda: self._copy_to_clipboard("timestamp"),
         )
         self._context_menu.add_command(
-            label="Copy Name to Clipboard",
-            command=lambda: self._copy_to_clipboard("name"),
+            label="Copy Realm to Clipboard",
+            command=lambda: self._copy_to_clipboard("realm"),
+        )
+        self._context_menu.add_command(
+            label="Copy Sender Name to Clipboard",
+            command=lambda: self._copy_to_clipboard("sender"),
+        )
+        self._context_menu.add_command(
+            label="Copy Recipient Name to Clipboard",
+            command=lambda: self._copy_to_clipboard("recipient"),
         )
         self._context_menu.add_command(
             label="Copy Gold to Clipboard",
@@ -84,7 +103,10 @@ class HuokanWindow(tkinter.Frame):
     def search(self):
         try:
             unsorted_results = search_payouts(
-                self._wow_path_picker.path, self._payment_filter.name()
+                self._wow_path_picker.path,
+                sender_realm=self._payment_filter.sender_realm(),
+                sender_name=self._payment_filter.sender_name(),
+                recipient_name=self._payment_filter.recipient_name(),
             )
             self.results = sorted(
                 unsorted_results, reverse=True, key=lambda result: result["timestamp"]
@@ -103,7 +125,7 @@ class HuokanWindow(tkinter.Frame):
         self._prev_sort_reverse = reverse
 
         self.results = sorted(
-            self.results, key=lambda result: result[col], reverse=reverse
+            self.results, key=lambda result: result.get(col, ""), reverse=reverse
         )
         self.display_results()
 
@@ -112,7 +134,15 @@ class HuokanWindow(tkinter.Frame):
         for result in self.results:
             timestamp = result["timestamp"].strftime("%c")
             self._results_view.insert(
-                "", "end", values=(timestamp, result["name"], result["gold"])
+                "",
+                "end",
+                values=(
+                    timestamp,
+                    result.get("senderRealm", ""),
+                    result.get("senderName", ""),
+                    result["recipientName"],
+                    result["gold"],
+                ),
             )
 
     def _show_context_menu(self, event):

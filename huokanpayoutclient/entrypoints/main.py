@@ -9,9 +9,9 @@ locale.setlocale(locale.LC_ALL, "")
 def main():
     root = tkinter.Tk()
     root.minsize(300, 200)
-    p = get_resource_path("logo.ico")
-    root.iconbitmap(p)
-    HuokanWindow(master=root)
+    root.iconbitmap(get_resource_path("logo.ico"))
+    window = HuokanWindow(master=root)
+    window.update()
     root.mainloop()
 
 

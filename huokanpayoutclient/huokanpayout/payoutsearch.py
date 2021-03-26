@@ -3,18 +3,42 @@ import glob
 import csv
 from datetime import datetime
 from decimal import Decimal
-from typing import Iterable, List
+from typing import Iterable, List, Dict
 from slpp import slpp
 
 
-def search_payouts(wow_path: str, name: str = None) -> Iterable[dict]:
+ONE_GOLD = Decimal(1_00_00)
+
+
+def search_payouts(
+    wow_path: str,
+    recipient_name: str = None,
+    sender_name: str = None,
+    sender_realm: str = None,
+) -> Iterable[dict]:
     filtered_payments = get_and_parse_history(wow_path)
-    if name is not None:
-        name = name.lower()
-        filtered_payments = filter(
-            lambda payment: payment["name"].lower().startswith(name), filtered_payments
+    if recipient_name is not None:
+        filtered_payments = filter_by_key_case_insensitive(
+            filtered_payments, "recipientName", recipient_name
+        )
+    if sender_name is not None:
+        filtered_payments = filter_by_key_case_insensitive(
+            filtered_payments, "senderName", sender_name
+        )
+    if sender_realm is not None:
+        filtered_payments = filter_by_key_case_insensitive(
+            filtered_payments, "senderRealm", sender_realm
         )
     return filtered_payments
+
+
+def filter_by_key_case_insensitive(
+    iterable_to_filter: Iterable[dict], key, search: str
+) -> Iterable[dict]:
+    search = search.lower()
+    return filter(
+        lambda item: item.get(key, "").lower().startswith(search), iterable_to_filter
+    )
 
 
 def get_and_parse_history(wow_path: str) -> List[dict]:
@@ -22,19 +46,25 @@ def get_and_parse_history(wow_path: str) -> List[dict]:
     return parse_history(history)
 
 
-def parse_history(history: list) -> List[dict]:
+def parse_history(history: List[dict]) -> List[dict]:
     completed_payments = []
     for payment_batch in history:
         input_payments = read_payments_csv(payment_batch["input"])
         output_payments = read_payments_csv(payment_batch.get("output", ""))
         payments = get_completed_payments(input_payments, output_payments)
+        unit = Decimal(payment_batch.get("unit", ONE_GOLD))
+        sender = {}
+        if "sender" in payment_batch:
+            sender["senderName"] = payment_batch["sender"]["name"]
+            sender["senderRealm"] = payment_batch["sender"]["realm"]
         transformed_payments = [
             {
-                "name": name,
-                "gold": gold,
+                "recipientName": name,
+                "gold": round(money / unit * ONE_GOLD, 4),  # Convert to gold
                 "timestamp": datetime.fromtimestamp(int(payment_batch["timestamp"])),
+                **sender,
             }
-            for name, gold in payments.items()
+            for name, money in payments.items()
         ]
         completed_payments.extend(transformed_payments)
     return completed_payments
@@ -50,8 +80,8 @@ def read_payments_csv(history: str) -> dict:
 
 
 def get_completed_payments(
-    input_payments: dict[str, Decimal], output_payments: dict[str, Decimal]
-) -> dict[str, Decimal]:
+    input_payments: Dict[str, Decimal], output_payments: Dict[str, Decimal]
+) -> Dict[str, Decimal]:
     diff = input_payments.copy()
     for name, gold in output_payments.items():
         diff[name] = diff.get(name, Decimal(0)) - gold
