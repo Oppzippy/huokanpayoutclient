@@ -71,3 +71,70 @@ class PayoutSearchTest(unittest.TestCase):
                 },
             ],
         )
+
+    def test_search_sender_name(self):
+        results = list(
+            search_payouts(os.path.join(PATH, "_retail_"), sender_name="Sender")
+        )
+        self.assertCountEqual(
+            results,
+            [
+                {
+                    "recipientName": "Player1",
+                    "timestamp": datetime.fromtimestamp(3),
+                    "gold": Decimal(1),
+                    "senderName": "Sender",
+                    "senderRealm": "Realm",
+                },
+                {
+                    "recipientName": "Someone",
+                    "timestamp": datetime.fromtimestamp(3),
+                    "gold": Decimal(1),
+                    "senderName": "Sender",
+                    "senderRealm": "Realm",
+                },
+            ],
+        )
+
+    def test_search_sender_realm(self):
+        results = list(
+            search_payouts(os.path.join(PATH, "_retail_"), sender_realm="Realm")
+        )
+
+        self.assertCountEqual(
+            results,
+            [
+                {
+                    "recipientName": "Player1",
+                    "timestamp": datetime.fromtimestamp(3),
+                    "gold": Decimal(1),
+                    "senderName": "Sender",
+                    "senderRealm": "Realm",
+                },
+                {
+                    "recipientName": "Someone",
+                    "timestamp": datetime.fromtimestamp(3),
+                    "gold": Decimal(1),
+                    "senderName": "Sender",
+                    "senderRealm": "Realm",
+                },
+            ],
+        )
+
+    def test_search_recipient_name(self):
+        results = list(
+            search_payouts(os.path.join(PATH, "_retail_"), recipient_name="Someone")
+        )
+
+        self.assertCountEqual(
+            results,
+            [
+                {
+                    "recipientName": "Someone",
+                    "timestamp": datetime.fromtimestamp(3),
+                    "gold": Decimal(1),
+                    "senderName": "Sender",
+                    "senderRealm": "Realm",
+                }
+            ],
+        )
