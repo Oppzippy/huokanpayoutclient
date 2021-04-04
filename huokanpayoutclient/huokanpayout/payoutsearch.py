@@ -97,9 +97,10 @@ def get_history(wow_path: str) -> list:
     savedvariables = read_files(savedvariables_files)
     history = []
     for savedvariable in savedvariables:
-        profiles = savedvariable["profiles"]
-        for profile in profiles.values():
-            history.extend(profile["history"])
+        if "profiles" in savedvariable:
+            profiles = savedvariable["profiles"]
+            for profile in profiles.values():
+                history.extend(profile["history"])
     return history
 
 
@@ -111,7 +112,7 @@ def find_files(wow_path: str) -> List[str]:
 
 
 def read_files(files: Iterable) -> Iterable:
-    return map(lambda f: read_file(f), files)
+    return filter(lambda sv: sv is not None, map(lambda f: read_file(f), files))
 
 
 def read_file(file_path: str) -> dict:
