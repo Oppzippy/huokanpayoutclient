@@ -5,7 +5,7 @@ import setuptools
 
 setup(
     name="huokanpayoutclient",
-    version="1.1.0",
+    version="1.1.1",
     description="Search logs from the Huokan Payout addon for World of Warcraft.",
     author="Oppzippy",
     author_email="oppzippy@gmail.com",
