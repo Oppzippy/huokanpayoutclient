@@ -100,7 +100,8 @@ def get_history(wow_path: str) -> list:
         if "profiles" in savedvariable:
             profiles = savedvariable["profiles"]
             for profile in profiles.values():
-                history.extend(profile["history"])
+                if "history" in profile:
+                    history.extend(profile["history"])
     return history
 
 
